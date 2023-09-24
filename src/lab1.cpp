@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -7,10 +9,12 @@ class Matrix {
  private:
   double **matrix;
   size_t sizeY, sizeX;
+  static inline unsigned countMatrix{};
 
  public:
   Matrix() : Matrix(3, 3) {}
   Matrix(const size_t x, const size_t y) {
+    ++countMatrix;
     sizeY = y;
     sizeX = x;
     matrix = new double *[sizeX];
@@ -20,6 +24,7 @@ class Matrix {
       for (int j = 0; j < sizeY; j++) matrix[i][j] = 0;
   }
   Matrix(double **matrix, const size_t x, const size_t y) {
+    ++countMatrix;
     sizeY = y;
     sizeX = x;
     this->matrix = new double *[sizeX];
@@ -29,6 +34,7 @@ class Matrix {
       for (int j = 0; j < sizeY; j++) this->matrix[i][j] = matrix[i][j];
   }
   Matrix(const Matrix &other) {
+    ++countMatrix;
     this->sizeX = other.sizeX;
     this->sizeY = other.sizeY;
     this->matrix = new double *[sizeX];
@@ -41,6 +47,7 @@ class Matrix {
   ~Matrix() {
     for (int i = 0; i < 3; i++) delete[] matrix[i];
     delete[] matrix;
+    --countMatrix;
   }
 
   void SetMatrix(double **matrix, const size_t x, const size_t y) {
@@ -69,7 +76,7 @@ class Matrix {
 
   void PrintMatrix() {
     for (int i = 0; i < sizeX; i++) {
-      for (int j = 0; j < sizeY; j++) cout << matrix[i][j] << ' ';
+      for (int j = 0; j < sizeY; j++) printf("%-8.2lf", matrix[i][j]);
       cout << endl;
     }
   }
@@ -101,18 +108,10 @@ class Matrix {
   }
   void ReplaсeElement(double replaceElement, double newElement) {
     double *tmp = this->FindElement(replaceElement);
-    if(tmp)
-    *tmp = newElement;
+    if (tmp) *tmp = newElement;
   }
-  void TranspositionMatrix() {
-    double **tmpMatrix = this->GetMatrix();
-    for (int i = 0; i < sizeX; i++) {
-      for (int j = 0; j < sizeY; j++) {
-        matrix[i][j] = tmpMatrix[j][i];
-      }
-    }
-    for (int i = 0; i < 3; i++) delete[] tmpMatrix[i];
-    delete[] tmpMatrix;
+  static void AmountMatrix() {
+    cout << "Create " << countMatrix << " objects\n";
   }
 };
 
@@ -154,10 +153,9 @@ void TestMethod() {
   cout << "Test SortByСolumn:\n";
   a.SortByСolumn();
   a.PrintMatrix();
-  cout << "Test TranspositionMatrix:\n";
-  a.TranspositionMatrix();
+  cout << "Test ReadMatrix:\nEnter the matrix 3x3:\n";
+  a.ReadMatrix();
   a.PrintMatrix();
-  cout << "Test ReadMatrix:\n";
 
   for (int i = 0; i < 3; i++) delete[] arr[i];
   delete[] arr;
@@ -188,6 +186,8 @@ void TestConstructor() {
   c.PrintMatrix();
   for (int i = 0; i < 3; i++) delete[] arr[i];
   delete[] arr;
+  Matrix ::AmountMatrix();
+
   cout << endl << endl;
 }
 
