@@ -29,7 +29,7 @@ Matrix ::Matrix(const Matrix &other) {
 }
 
 Matrix ::~Matrix() {
-  for (int i = 0; i < 3; i++) delete[] matrix[i];
+  for (int i = 0; i < sizeMatrix; i++) delete[] matrix[i];
   delete[] matrix;
 }
 
@@ -61,16 +61,80 @@ void Matrix ::Transposition() {
       matrix[i][j] = tmp[j][i];
     }
   }
-  for (int i = 0; i < 3; i++) delete[] tmp[i];
+  for (int i = 0; i < sizeMatrix; i++) delete[] tmp[i];
   delete[] tmp;
 }
 
-double **Matrix ::Sum(Matrix &other) {
-    double **tmp = other.GetMatrix();
-    for (int i = 0; i < sizeMatrix; i++) {
+double **Matrix ::Sum(const Matrix &other) {
+  double **tmp = this->GetMatrix();
+  for (int i = 0; i < sizeMatrix; i++) {
     for (int j = 0; j < sizeMatrix; j++) {
-      tmp[i][j]+=matrix[i][j];
+      tmp[i][j] += other.matrix[i][j];
     }
   }
   return tmp;
+}
+
+Matrix Matrix ::operator+(const Matrix &other) {
+  Matrix sum = other;
+  for (int i = 0; i < sizeMatrix; i++) {
+    for (int j = 0; j < sizeMatrix; j++) {
+      sum.matrix[i][j] += matrix[i][j];
+    }
+  }
+  return sum;
+}
+
+Matrix operator-(const Matrix &minuend, const Matrix &subtrahend) {
+  Matrix diff = minuend;
+  for (int i = 0; i < minuend.sizeMatrix; i++) {
+    for (int j = 0; j < minuend.sizeMatrix; j++) {
+      diff.matrix[i][j] -= subtrahend.matrix[i][j];
+    }
+  }
+  return diff;
+}
+
+Matrix Matrix ::operator=(const Matrix &other) {
+  sizeMatrix = other.sizeMatrix;
+  for (int i = 0; i < sizeMatrix; i++) {
+    for (int j = 0; j < sizeMatrix; j++) {
+      matrix[i][j] = other.matrix[i][j];
+    }
+  }
+
+  return *this;
+}
+
+Matrix Matrix ::operator++() {
+  for (int i = 0; i < sizeMatrix; i++) {
+    for (int j = 0; j < sizeMatrix; j++) {
+      matrix[i][j] += 1;
+    }
+  }
+  return *this;
+}
+
+Matrix Matrix ::operator++(int) {
+  Matrix copy(*this);
+  for (int i = 0; i < sizeMatrix; i++) {
+    for (int j = 0; j < sizeMatrix; j++) {
+      matrix[i][j]++;
+    }
+  }
+  return copy;
+}
+
+Matrix ::operator bool() {
+  bool matrixExists = false;
+  for (int i = 0; i < sizeMatrix; i++) {
+    for (int j = 0; j < sizeMatrix; j++) {
+      if (matrix[i][j] != 0) {
+        matrixExists = true;
+        break;
+      }
+    }
+  }
+
+  return matrixExists;
 }

@@ -3,6 +3,7 @@
 #define HEADERS
 
 #include <stdio.h>
+
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -24,7 +25,14 @@ class Matrix {
   double **GetMatrix();
   void PrintMatrix();
   void Transposition();
-  double **Sum(Matrix &other); 
+  double **Sum(const Matrix &other);
+
+  Matrix operator+(const Matrix &other);
+  friend Matrix operator-(const Matrix &minuend, const Matrix &subtrahend);
+  Matrix operator=(const Matrix &other);
+  Matrix operator++();
+  Matrix operator++(int);
+  operator bool();
 };
 
 #endif
