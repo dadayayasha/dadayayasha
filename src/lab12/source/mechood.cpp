@@ -29,8 +29,12 @@ Matrix ::Matrix(const Matrix &other) {
 }
 
 Matrix ::~Matrix() {
-  for (int i = 0; i < sizeMatrix; i++) delete[] matrix[i];
-  delete[] matrix;
+  for (int i = 0; i < sizeMatrix; i++) {
+    if(matrix[i])delete[] matrix[i];
+    matrix[i] = nullptr;  // Set pointer to nullptr after deletion
+  }
+  if(matrix)delete[] matrix;
+  matrix = nullptr;  // Set pointer to nullptr after deletion
 }
 
 void Matrix ::SetMatrix(double **matrix, const size_t sizeMatrix) {
@@ -138,3 +142,21 @@ Matrix ::operator bool() {
 
   return matrixExists;
 }
+
+ostream& operator << (ostream& out, Matrix& C){
+  for (int i = 0; i < C.sizeMatrix; i++) {
+    for (int j = 0; j < C.sizeMatrix; j++) out << C.matrix[i][j]<<" ";
+    //printf("%-8.2lf", C.matrix[i][j]);
+    out << endl;
+  }
+  return out;
+}
+
+istream& operator >> (istream& in, Matrix& C){
+  
+  for (int i = 0; i < C.sizeMatrix; i++) {
+    for (int j = 0; j < C.sizeMatrix; j++) in>> C.matrix[i][j];
+  }
+  return in;
+}
+

@@ -3,6 +3,8 @@
 void TestMethod();
 void TestConstructor();
 void TestOperator();
+void TestStream();
+
 
 int main() {
   srand(time(NULL));
@@ -14,6 +16,8 @@ int main() {
     cout << "1. Test Constructor\n";
     cout << "2. Test Method\n";
     cout << "3. Test Operator\n";
+    cout << "4. Test Stream \n";
+
     cin >> menu;
     system("clear");
     switch (menu) {
@@ -27,6 +31,10 @@ int main() {
 
       case 3:
         TestOperator();
+        break;
+      
+      case 4:
+        TestStream();
         break;
 
       default:
@@ -46,7 +54,7 @@ void TestMethod() {
   for (int i = 0; i < size; i++)
     for (int j = 0; j < size; j++) arr[i][j] = rand() % 100;
 
-  Matrix a;
+  Matrix a(3);
   a.SetMatrix(arr, size);
   a.PrintMatrix();
   for (int i = 0; i < 3; i++) delete[] arr[i];
@@ -98,7 +106,7 @@ void TestMethod() {
 
 void TestConstructor() {
   cout << "Default constructor create matrix 3x3 filled with zeros:\n";
-  Matrix a;
+  Matrix a(3);
   a.PrintMatrix();
   cout << endl;
 
@@ -188,7 +196,7 @@ void TestOperator() {
     cout << "Matrix empty\n";
   cout << endl;
   cout << "Matrix F\n";
-  Matrix f;
+  Matrix f(3);
   f.PrintMatrix();
   if (bool(f))
     cout << "Matrix filled\n";
@@ -196,8 +204,45 @@ void TestOperator() {
     cout << "Matrix empty\n";
   cout << endl;
 
-  for (int i = 0; i < 3; i++) delete[] arr[i];
+  for (int i = 0; i < size; i++) delete[] arr[i];
   delete[] arr;
-  for (int i = 0; i < 3; i++) delete[] arr2[i];
+  for (int i = 0; i < size; i++) delete[] arr2[i];
   delete[] arr2;
+}
+
+void TestStream(){
+
+  const size_t size = 3;
+
+  double **arr = new double *[size];
+  for (int i = 0; i < size; i++) arr[i] = new double[size];
+  for (int i = 0; i < size; i++)
+    for (int j = 0; j < size; j++) arr[i][j] = rand() % 100;
+  
+  Matrix a(arr,size);
+  cin>> a;
+  cout<< a;
+  ofstream out("test.bin",ios_base::binary);
+    if (out.is_open()){        
+      cout <<"Writing...\n";
+      out.write((char*)&a, sizeof(a));
+      //out << a;
+    }
+  out.close();
+
+
+  Matrix b(3);
+  ifstream in("test.bin",ios_base::binary);
+    if(in.is_open()){
+      cout<< "Reading...\n";
+      in.read((char*)&b, sizeof(b));
+      
+    }
+  in.close();
+  cout << b;
+
+
+  for (int i = 0; i < size; i++) delete[] arr[i];
+  delete[] arr;
+
 }

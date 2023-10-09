@@ -7,6 +7,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <fstream>
+
 using namespace std;
 
 class Matrix {
@@ -15,7 +17,7 @@ class Matrix {
   size_t sizeMatrix;
 
  public:
-  Matrix() : Matrix(3) {}
+  //Matrix() : Matrix(3) {}
   Matrix(const size_t sizeMatrix);
   Matrix(double **matrix, const size_t sizeMatrix);
   Matrix(const Matrix &other);
@@ -33,6 +35,10 @@ class Matrix {
   Matrix operator++();
   Matrix operator++(int);
   operator bool();
+
+  friend ostream& operator << (ostream& out, Matrix& C);
+  friend istream& operator >> (istream& in, Matrix& C);
+
 };
 
 #endif
