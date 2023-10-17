@@ -30,10 +30,10 @@ Matrix ::Matrix(const Matrix &other) {
 
 Matrix ::~Matrix() {
   for (int i = 0; i < sizeMatrix; i++) {
-    if(matrix[i])delete[] matrix[i];
+    if (matrix[i]) delete[] matrix[i];
     matrix[i] = nullptr;  // Set pointer to nullptr after deletion
   }
-  if(matrix)delete[] matrix;
+  if (matrix) delete[] matrix;
   matrix = nullptr;  // Set pointer to nullptr after deletion
 }
 
@@ -143,20 +143,44 @@ Matrix ::operator bool() {
   return matrixExists;
 }
 
-ostream& operator << (ostream& out, Matrix& C){
+ostream &operator<<(ostream &out, Matrix &C) {
   for (int i = 0; i < C.sizeMatrix; i++) {
-    for (int j = 0; j < C.sizeMatrix; j++) out << C.matrix[i][j]<<" ";
-    //printf("%-8.2lf", C.matrix[i][j]);
+    for (int j = 0; j < C.sizeMatrix; j++) out << C.matrix[i][j] << " ";
+    // printf("%-8.2lf", C.matrix[i][j]);
     out << endl;
   }
   return out;
 }
 
-istream& operator >> (istream& in, Matrix& C){
-  
+istream &operator>>(istream &in, Matrix &C) {
   for (int i = 0; i < C.sizeMatrix; i++) {
-    for (int j = 0; j < C.sizeMatrix; j++) in>> C.matrix[i][j];
+    for (int j = 0; j < C.sizeMatrix; j++) in >> C.matrix[i][j];
   }
   return in;
 }
 
+void Matrix ::WriteBinary(char *name) {
+  ofstream out(name, ios_base::binary);
+  if (out.is_open()) {
+    out.write((char *)&sizeMatrix, sizeof(sizeMatrix));
+    for (int i = 0; i < sizeMatrix; i++) {
+      for (int j = 0; j < sizeMatrix; j++) {
+        out.write((char *)&matrix[i][j], sizeof(matrix[i][j]));
+      }
+    }
+  }
+  out.close();
+}
+
+void Matrix ::ReadBinary(char *name) {
+  ifstream in(name, ios_base::binary);
+  if (in.is_open()) {
+    in.read((char *)&sizeMatrix, sizeof(sizeMatrix));
+    for (int i = 0; i < sizeMatrix; i++) {
+      for (int j = 0; j < sizeMatrix; j++) {
+        in.read((char *)&matrix[i][j], sizeof(matrix[i][j]));
+      }
+    }
+  }
+  in.close();
+}

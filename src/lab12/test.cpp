@@ -5,7 +5,6 @@ void TestConstructor();
 void TestOperator();
 void TestStream();
 
-
 int main() {
   srand(time(NULL));
   int menu = 1;
@@ -32,7 +31,7 @@ int main() {
       case 3:
         TestOperator();
         break;
-      
+
       case 4:
         TestStream();
         break;
@@ -210,39 +209,55 @@ void TestOperator() {
   delete[] arr2;
 }
 
-void TestStream(){
+void TestStream() {
+  // const size_t size = 3;
 
-  const size_t size = 3;
+  // double **arr = new double *[size];
+  // for (int i = 0; i < size; i++) arr[i] = new double[size];
+  // for (int i = 0; i < size; i++)
+  //   for (int j = 0; j < size; j++) arr[i][j] = rand() % 100;
+  char name[20] = "test.bin";
+  {
+    Matrix a(3);
+    cout << "Enter matrix 3x3\n";
+    cin >> a;
+    cout << "3x3 matrix output\n";
+    cout << a;
 
-  double **arr = new double *[size];
-  for (int i = 0; i < size; i++) arr[i] = new double[size];
-  for (int i = 0; i < size; i++)
-    for (int j = 0; j < size; j++) arr[i][j] = rand() % 100;
-  
-  Matrix a(arr,size);
-  cin>> a;
-  cout<< a;
-  ofstream out("test.bin",ios_base::binary);
-    if (out.is_open()){        
-      cout <<"Writing...\n";
-      out.write((char*)&a, sizeof(a));
-      //out << a;
+    cout << "Write matrix in file \"test.txt\"\n";
+    ofstream out("test.txt");
+    if (out.is_open()) {
+      out << a;
     }
-  out.close();
+    out.close();
+    system("open test.txt");
 
+    cout << "Write matrix in binary file \"test.bin\"\n";
+    a.WriteBinary(name);
+  }
 
+  cout << "Read matrix from binary file \"test.bin\"\n";
   Matrix b(3);
-  ifstream in("test.bin",ios_base::binary);
-    if(in.is_open()){
-      cout<< "Reading...\n";
-      in.read((char*)&b, sizeof(b));
-      
-    }
-  in.close();
+  b.ReadBinary(name);
   cout << b;
+  // ofstream out("test.bin",ios_base::binary);
+  //   if (out.is_open()){
+  //     cout <<"Writing...\n";
+  //     out.write((char*)&a, sizeof(a));
+  //     //out << a;
+  //   }
+  // out.close();
 
+  // Matrix b(3);
+  // ifstream in("test.bin",ios_base::binary);
+  //   if(in.is_open()){
+  //     cout<< "Reading...\n";
+  //     in.read((char*)&b, sizeof(b));
 
-  for (int i = 0; i < size; i++) delete[] arr[i];
-  delete[] arr;
+  //   }
+  // in.close();
+  // cout << b;
 
+  // for (int i = 0; i < size; i++) delete[] arr[i];
+  // delete[] arr;
 }

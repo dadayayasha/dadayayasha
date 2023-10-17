@@ -8,11 +8,13 @@ lab_test:
 	g++ test.cpp $(SOURCE) -o test
 
 leak:
-	valgrind --tool=memcheck --leak-check=yes  ./test
+	leaks -atExit -- ./test
+#valgrind --tool=memcheck --leak-check=yes  ./test
 
 clang:
 	clang-format -i *.cpp $(SOURCE) $(HEASERS) 
 
 clean:
 	rm test
+	rm test.bin test.txt
 	clear

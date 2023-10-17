@@ -38,7 +38,8 @@ class Matrix {
 
   friend ostream& operator << (ostream& out, Matrix& C);
   friend istream& operator >> (istream& in, Matrix& C);
-
+  void WriteBinary(char *name);
+  void ReadBinary(char *name);
 };
 
 #endif
