@@ -1,23 +1,21 @@
-
 #ifndef HEADERS
 #define HEADERS
 
 #include <stdio.h>
 
-#include <cstdlib>
 #include <ctime>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 
 class Matrix {
- private:
+ protected:
   double **matrix;
   size_t sizeMatrix;
 
  public:
-  //Matrix() : Matrix(3) {}
+  Matrix();
   Matrix(const size_t sizeMatrix);
   Matrix(double **matrix, const size_t sizeMatrix);
   Matrix(const Matrix &other);
@@ -25,7 +23,7 @@ class Matrix {
 
   void SetMatrix(double **matrix, const size_t sizeMatrix);
   double **GetMatrix();
-  void PrintMatrix();
+  virtual void Print();
   void Transposition();
   double **Sum(const Matrix &other);
 
@@ -36,10 +34,40 @@ class Matrix {
   Matrix operator++(int);
   operator bool();
 
-  friend ostream& operator << (ostream& out, Matrix& C);
-  friend istream& operator >> (istream& in, Matrix& C);
+  friend ostream &operator<<(ostream &out, Matrix &C);
+  friend istream &operator>>(istream &in, Matrix &C);
+
   void WriteBinary(char *name);
   void ReadBinary(char *name);
+
 };
+
+class DateCreate : public Matrix{
+  int day;
+  int month;
+  int year;
+
+  public:
+  DateCreate();
+  DateCreate(int day,int month,int year);
+  DateCreate(const DateCreate &other);
+
+  void SetDate();
+  void Print();
+};
+
+class NameMatrix : public Matrix{
+  char name[100];
+
+ public:
+  NameMatrix();
+  NameMatrix(const char *name);
+  NameMatrix(const NameMatrix &other);
+
+
+  void SetName();
+  void PrintName();
+};
+
 
 #endif

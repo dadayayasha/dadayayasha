@@ -13,7 +13,7 @@ leak:
 
 clang:
 	clang-format -i *.cpp $(SOURCE) $(HEASERS) 
-
+#alt shift fs
 clean:
 	rm test
 	rm test.bin test.txt

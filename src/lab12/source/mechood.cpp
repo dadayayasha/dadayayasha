@@ -1,5 +1,10 @@
 #include "../headers/header.h"
 
+Matrix::Matrix() {
+  sizeMatrix = 0;
+  matrix = nullptr;
+}
+
 Matrix::Matrix(const size_t sizeMatrix) {
   this->sizeMatrix = sizeMatrix;
   matrix = new double *[sizeMatrix];
@@ -31,10 +36,10 @@ Matrix ::Matrix(const Matrix &other) {
 Matrix ::~Matrix() {
   for (int i = 0; i < sizeMatrix; i++) {
     if (matrix[i]) delete[] matrix[i];
-    matrix[i] = nullptr;  // Set pointer to nullptr after deletion
+    matrix[i] = nullptr;
   }
   if (matrix) delete[] matrix;
-  matrix = nullptr;  // Set pointer to nullptr after deletion
+  matrix = nullptr;
 }
 
 void Matrix ::SetMatrix(double **matrix, const size_t sizeMatrix) {
@@ -51,7 +56,7 @@ double **Matrix ::GetMatrix() {
   return matrix;
 }
 
-void Matrix ::PrintMatrix() {
+void Matrix ::Print() {
   for (int i = 0; i < sizeMatrix; i++) {
     for (int j = 0; j < sizeMatrix; j++) printf("%-8.2lf", matrix[i][j]);
     cout << endl;
@@ -100,6 +105,7 @@ Matrix operator-(const Matrix &minuend, const Matrix &subtrahend) {
 }
 
 Matrix Matrix ::operator=(const Matrix &other) {
+  if (&other == this) return *this;
   sizeMatrix = other.sizeMatrix;
   for (int i = 0; i < sizeMatrix; i++) {
     for (int j = 0; j < sizeMatrix; j++) {
@@ -121,11 +127,12 @@ Matrix Matrix ::operator++() {
 
 Matrix Matrix ::operator++(int) {
   Matrix copy(*this);
-  for (int i = 0; i < sizeMatrix; i++) {
-    for (int j = 0; j < sizeMatrix; j++) {
-      matrix[i][j]++;
-    }
-  }
+  // for (int i = 0; i < sizeMatrix; i++) {
+  //   for (int j = 0; j < sizeMatrix; j++) {
+  //     matrix[i][j]++;
+  //   }
+  // }
+  ++(*this);
   return copy;
 }
 
@@ -160,7 +167,7 @@ istream &operator>>(istream &in, Matrix &C) {
 }
 
 void Matrix ::WriteBinary(char *name) {
-  ofstream out(name, ios_base::binary);
+  ofstream out(name, ios::binary);
   if (out.is_open()) {
     out.write((char *)&sizeMatrix, sizeof(sizeMatrix));
     for (int i = 0; i < sizeMatrix; i++) {
@@ -173,9 +180,13 @@ void Matrix ::WriteBinary(char *name) {
 }
 
 void Matrix ::ReadBinary(char *name) {
-  ifstream in(name, ios_base::binary);
+  ifstream in(name, ios::binary);
   if (in.is_open()) {
+    for (int i = 0; i < sizeMatrix; i++) delete[] matrix[i];
+    delete[] matrix;
     in.read((char *)&sizeMatrix, sizeof(sizeMatrix));
+    matrix = new double *[sizeMatrix];
+    for (int i = 0; i < sizeMatrix; i++) matrix[i] = new double[sizeMatrix];
     for (int i = 0; i < sizeMatrix; i++) {
       for (int j = 0; j < sizeMatrix; j++) {
         in.read((char *)&matrix[i][j], sizeof(matrix[i][j]));
@@ -184,3 +195,55 @@ void Matrix ::ReadBinary(char *name) {
   }
   in.close();
 }
+
+DateCreate ::DateCreate() {
+  day = 0;
+  month = 0;
+  year = 0;
+}
+DateCreate ::DateCreate(int day, int month, int year) {
+  this->day = day;
+  this->month = month;
+  this->year = year;
+}
+
+DateCreate ::DateCreate(const DateCreate &other) {
+  this->day = other.day;
+  this->month = other.month;
+  this->year = other.year;
+}
+
+void DateCreate::SetDate() {
+  cout << "day:";
+  cin >> day;
+  cout << "\nmonth:";
+  cin >> month;
+  cout << "\nyear:";
+  cin >> year;
+  cout << endl;
+}
+
+void DateCreate::Print() {
+  cout << "day: " << day;
+  cout << "\nmonth: " << month;
+  cout << "\nyear: " << year;
+  cout << endl;
+}
+
+NameMatrix::NameMatrix() { strcpy(this->name, "none"); }
+
+NameMatrix::NameMatrix(const char *name) { strcpy(this->name, name); }
+
+NameMatrix ::NameMatrix(const NameMatrix &other) {
+  strcpy(this->name, other.name);
+}
+
+void NameMatrix::SetName() {
+  // char name[100];
+  cout << "Enter name: ";
+  cin >> name;
+  cout << endl;
+  // strcpy(this->name,name);
+}
+
+void NameMatrix::PrintName() { cout << name << endl; }
