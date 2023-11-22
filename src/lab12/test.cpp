@@ -272,11 +272,11 @@ void TestStream() {
 
 void TestChildren(){
 
-  DateCreate a(12,3,2022);
-  NameMatrix b("Matrica");
+  DateCreate a(12,3,2022,3);
+  NameMatrix b("Matrica",4);
   a.Print();
   cout<< endl;
-  b.PrintName();
+  b.Print();
 
   cout<< endl;
   cout<< endl;
@@ -284,4 +284,4 @@ void TestChildren(){
   p->Print();
   cout<< endl;
 
-}
+} 

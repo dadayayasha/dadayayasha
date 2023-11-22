@@ -201,7 +201,7 @@ DateCreate ::DateCreate() {
   month = 0;
   year = 0;
 }
-DateCreate ::DateCreate(int day, int month, int year) {
+DateCreate ::DateCreate(int day, int month, int year,int n):Matrix(n) {
   this->day = day;
   this->month = month;
   this->year = year;
@@ -224,6 +224,7 @@ void DateCreate::SetDate() {
 }
 
 void DateCreate::Print() {
+  Matrix::Print();
   cout << "day: " << day;
   cout << "\nmonth: " << month;
   cout << "\nyear: " << year;
@@ -232,18 +233,19 @@ void DateCreate::Print() {
 
 NameMatrix::NameMatrix() { strcpy(this->name, "none"); }
 
-NameMatrix::NameMatrix(const char *name) { strcpy(this->name, name); }
+NameMatrix::NameMatrix(const char *name,int n):Matrix(n) { strcpy(this->name, name); }
 
 NameMatrix ::NameMatrix(const NameMatrix &other) {
   strcpy(this->name, other.name);
 }
 
 void NameMatrix::SetName() {
-  // char name[100];
   cout << "Enter name: ";
   cin >> name;
   cout << endl;
-  // strcpy(this->name,name);
 }
 
-void NameMatrix::PrintName() { cout << name << endl; }
+void NameMatrix::Print() { 
+Matrix::Print();
+cout << name << endl; 
+}

@@ -49,11 +49,11 @@ class DateCreate : public Matrix{
 
   public:
   DateCreate();
-  DateCreate(int day,int month,int year);
+  DateCreate(int day,int month,int year,int n);
   DateCreate(const DateCreate &other);
 
   void SetDate();
-  void Print();
+  virtual void Print();
 };
 
 class NameMatrix : public Matrix{
@@ -61,12 +61,12 @@ class NameMatrix : public Matrix{
 
  public:
   NameMatrix();
-  NameMatrix(const char *name);
+  NameMatrix(const char *name,int n);
   NameMatrix(const NameMatrix &other);
 
 
   void SetName();
-  void PrintName();
+  virtual void Print();
 };
 
 
