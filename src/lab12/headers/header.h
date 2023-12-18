@@ -7,6 +7,8 @@
 #include <fstream>
 #include <iostream>
 
+#define MAX_MEM 4000000000
+
 using namespace std;
 
 class Matrix {

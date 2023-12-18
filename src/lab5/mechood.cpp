@@ -1,6 +1,8 @@
 #include "header.h"
 
-List::List(int size) {
+List::List(long long int size) {
+  if (size > MAX_MEM / sizeof(Node) || size < 1) throw "Uncorrect size\n";
+
   head = tail = nullptr;
   front = rear = -1;
   this->size = size;
@@ -29,7 +31,7 @@ List::List(int size) {
 }
 
 List::List(const List &other) {
-//создание очереди
+  // создание очереди
   this->head = this->tail = nullptr;
   this->front = other.front;
   this->rear = other.rear;
@@ -52,36 +54,38 @@ List::List(const List &other) {
       this->tail = temp;
     }
   }
-//копирование данных
+  // копирование данных
   this->start = this->head;
   Node *tmp = this->start;
   Node *tmp2 = other.start;
 
   for (int i = 0; i < size; i++) {
-    tmp->data = tmp2->data;
+    if (tmp2->data) {
+      data *newElement = new data(*tmp2->data);
+      tmp->data = newElement;
+    }
     tmp = tmp->next;
     tmp2 = tmp2->next;
   }
-//копирование front и rear
+  // копирование front и rear
   for (int i = 0; i < front; i++) {
     this->head = this->head->next;
   }
-  for (int i = 0; i < rear; i++)
-  {
-    this->tail=this->tail->next;
+  for (int i = 0; i < rear; i++) {
+    this->tail = this->tail->next;
   }
-  
 }
 
-
-
 List::~List() {
+  long long int n = size;
   Node *tmp = start;
-  while (size > 1) {
+  while (n > 1) {
     tmp = tmp->next;
+    if (tmp->prev->data) delete tmp->prev->data;
     delete tmp->prev;
-    size--;
+    n--;
   }
+  if (tmp->data) delete tmp->data;
   delete tmp;
 }
 
@@ -102,14 +106,13 @@ bool List::isEmpty() {
     return false;
 }
 
-
-
-void List::enQueue(Matrix *element) {
+void List::enQueue(data *element) {
   if (isFull()) {
-    cout << "Queue is full";
+    cout << "Queue is full\n";
   } else {
-    Matrix *newElement =
-        new Matrix(*element);  // Create a new Matrix object on the heap
+    if (!element) throw "Matrix is empty\n";
+    data *newElement =
+        new data(*element);  // Create a new Matrix object on the heap
     if (front == -1) {
       front = 0;
       rear = 0;
@@ -126,7 +129,7 @@ void List::enQueue(Matrix *element) {
 
 int List::deQueue() {
   if (isEmpty()) {
-    cout << "Queue is empty" << endl;
+    cout << "Queue is empty\n" << endl;
     return (-1);
   } else {
     // head->data = nullptr;
@@ -138,22 +141,24 @@ int List::deQueue() {
       head = tail = nullptr;
     } else {
       front = (front + 1) % size;
+      delete head->data;
       head = head->next;
     }
     return 0;
   }
 }
 
-void List::display() {
+void List::Print() {
   Node *tmp;
   tmp = head;
   int i;
   if (isEmpty()) {
-    cout << endl << "Empty Queue" << endl;
+    cout << endl << "Empty Queue\n" << endl;
   } else {
     cout << "Front -> " << front;
     cout << endl << "Items:\n ";
     for (i = front; i != rear; i = (i + 1) % size) {
+      if (!(tmp->data)) throw "Node is empty";
       cout << *tmp->data;
       tmp = tmp->next;
       cout << endl;
@@ -162,3 +167,17 @@ void List::display() {
     cout << endl << "Rear -> " << rear << endl;
   }
 }
+
+// // Matrix *List::Get(int pos) {
+//   Node *tmp = start;
+//   if ((pos < 0 || pos >= size) || (pos < front || pos > rear)) {
+//     throw "Uncorrect position!!!\n";
+//   }
+
+//   while (pos--) tmp = tmp->next;
+
+//   data *newElement = new data(*tmp->data);
+
+//   return newElement;
+//   ;
+// }

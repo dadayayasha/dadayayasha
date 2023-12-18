@@ -6,6 +6,9 @@ Matrix::Matrix() {
 }
 
 Matrix::Matrix(const size_t sizeMatrix) {
+  if (sizeMatrix * sizeMatrix > MAX_MEM / sizeof(double) || sizeMatrix < 1)
+    throw -1;
+
   this->sizeMatrix = sizeMatrix;
   matrix = new double *[sizeMatrix];
   for (int i = 0; i < sizeMatrix; i++) matrix[i] = new double[sizeMatrix];
@@ -15,6 +18,10 @@ Matrix::Matrix(const size_t sizeMatrix) {
 }
 
 Matrix::Matrix(double **matrix, const size_t sizeMatrix) {
+  if (sizeMatrix * sizeMatrix > MAX_MEM / sizeof(double) || sizeMatrix < 1)
+    throw -1;
+  if (!matrix) throw 0;
+
   this->sizeMatrix = sizeMatrix;
   this->matrix = new double *[sizeMatrix];
   for (int i = 0; i < sizeMatrix; i++) this->matrix[i] = new double[sizeMatrix];
@@ -24,6 +31,8 @@ Matrix::Matrix(double **matrix, const size_t sizeMatrix) {
 }
 
 Matrix ::Matrix(const Matrix &other) {
+  //if (!(&other)) throw 1;
+
   this->sizeMatrix = other.sizeMatrix;
   this->matrix = new double *[sizeMatrix];
   for (int i = 0; i < sizeMatrix; i++) this->matrix[i] = new double[sizeMatrix];
@@ -43,6 +52,10 @@ Matrix ::~Matrix() {
 }
 
 void Matrix ::SetMatrix(double **matrix, const size_t sizeMatrix) {
+  if (sizeMatrix * sizeMatrix > MAX_MEM / sizeof(double) || sizeMatrix < 1)
+    throw -1;
+  if (!matrix) throw 0;
+
   for (int i = 0; i < sizeMatrix; i++)
     for (int j = 0; j < sizeMatrix; j++) this->matrix[i][j] = matrix[i][j];
 }
@@ -75,6 +88,8 @@ void Matrix ::Transposition() {
 }
 
 double **Matrix ::Sum(const Matrix &other) {
+  //if (!(&other)) throw 1;
+
   double **tmp = this->GetMatrix();
   for (int i = 0; i < sizeMatrix; i++) {
     for (int j = 0; j < sizeMatrix; j++) {
@@ -85,6 +100,8 @@ double **Matrix ::Sum(const Matrix &other) {
 }
 
 Matrix Matrix ::operator+(const Matrix &other) {
+  //if (!(&other)) throw 1;
+
   Matrix sum = other;
   for (int i = 0; i < sizeMatrix; i++) {
     for (int j = 0; j < sizeMatrix; j++) {
@@ -95,6 +112,8 @@ Matrix Matrix ::operator+(const Matrix &other) {
 }
 
 Matrix operator-(const Matrix &minuend, const Matrix &subtrahend) {
+  //if (!(&minuend || &subtrahend)) throw 1;
+
   Matrix diff = minuend;
   for (int i = 0; i < minuend.sizeMatrix; i++) {
     for (int j = 0; j < minuend.sizeMatrix; j++) {
@@ -105,6 +124,8 @@ Matrix operator-(const Matrix &minuend, const Matrix &subtrahend) {
 }
 
 Matrix Matrix ::operator=(const Matrix &other) {
+  //if (!(&other)) throw 1;
+
   if (&other == this) return *this;
   sizeMatrix = other.sizeMatrix;
   for (int i = 0; i < sizeMatrix; i++) {
@@ -201,7 +222,7 @@ DateCreate ::DateCreate() {
   month = 0;
   year = 0;
 }
-DateCreate ::DateCreate(int day, int month, int year,int n):Matrix(n) {
+DateCreate ::DateCreate(int day, int month, int year, int n) : Matrix(n) {
   this->day = day;
   this->month = month;
   this->year = year;
@@ -233,7 +254,9 @@ void DateCreate::Print() {
 
 NameMatrix::NameMatrix() { strcpy(this->name, "none"); }
 
-NameMatrix::NameMatrix(const char *name,int n):Matrix(n) { strcpy(this->name, name); }
+NameMatrix::NameMatrix(const char *name, int n) : Matrix(n) {
+  strcpy(this->name, name);
+}
 
 NameMatrix ::NameMatrix(const NameMatrix &other) {
   strcpy(this->name, other.name);
@@ -245,7 +268,7 @@ void NameMatrix::SetName() {
   cout << endl;
 }
 
-void NameMatrix::Print() { 
-Matrix::Print();
-cout << name << endl; 
+void NameMatrix::Print() {
+  Matrix::Print();
+  cout << name << endl;
 }

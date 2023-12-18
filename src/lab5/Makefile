@@ -1,4 +1,4 @@
-SOURCE = ../lab12/source/*.cpp *.cpp
+SOURCE = main.cpp
 HEASERS = ../lab12/headers/*.h *.h
 
 all: lab_test
