@@ -10,6 +10,8 @@ int main() {
   srand(time(NULL));
   int menu = 1;
   system("clear");
+  try_cathc_list();
+  try_cath_matrix();
 
   while (menu) {
     cout << "0. Exit\n";
@@ -48,6 +50,76 @@ int main() {
   }
 
   return 0;
+}
+
+void try_cathc_list() {
+  try {
+    List a(5);
+    // List a(1000000000);
+    // List a(-34);
+
+    const size_t size = 3;
+
+    double **arr = new double *[size];
+    for (int i = 0; i < size; i++) arr[i] = new double[size];
+    for (int i = 0; i < size; i++)
+      for (int j = 0; j < size; j++) arr[i][j] = rand() % 100;
+    Matrix a1(arr, size);
+
+    for (int i = 0; i < size; i++)
+      for (int j = 0; j < size; j++) arr[i][j] = rand() % 100;
+    Matrix a2(arr, size);
+
+    for (int i = 0; i < size; i++)
+      for (int j = 0; j < size; j++) arr[i][j] = rand() % 100;
+    Matrix a3(arr, size);
+
+    for (int i = 0; i < size; i++)
+      for (int j = 0; j < size; j++) arr[i][j] = rand() % 100;
+    Matrix a4(arr, size);
+
+    for (int i = 0; i < size; i++)
+      for (int j = 0; j < size; j++) arr[i][j] = rand() % 100;
+    Matrix a5(arr, size);
+
+    a.enQueue(&a1);
+    a.enQueue(&a2);
+    a.enQueue(&a3);
+    a.enQueue(&a4);
+    a.enQueue(&a5);
+    // a.enQueue(nullptr);
+    a.Print();
+    cout << endl;
+
+    a.deQueue();
+    a.deQueue();
+    a.Print();
+    cout << endl;
+
+    a.enQueue(&a1);
+    a.Print();
+    cout << endl;
+
+    for (int i = 0; i < size; i++) delete[] arr[i];
+    delete[] arr;
+
+    List b(a);
+    a.Print();
+    b.Print();
+
+  } catch (const char *errorMessage) {
+    cout << endl << errorMessage << endl;
+  }
+}
+
+void try_cath_matrix() {
+  try {
+    // Matrix a(100000000000);
+    Matrix b(NULL, 10);
+
+  } catch (int i) {
+    cout << "Error code: " << i << endl;
+  }
 }
 
 void TestMethod() {
@@ -230,7 +302,7 @@ void TestStream() {
     cout << "3x3 matrix output\n";
     cout << a;
 
-    Matrix c(arr,size);
+    Matrix c(arr, size);
     cout << "Write matrix in file \"test.txt\"\n";
     ofstream out("test.txt");
     if (out.is_open()) {
@@ -248,40 +320,20 @@ void TestStream() {
   b.ReadBinary(name);
   cout << b;
 
-  // ofstream out("test.bin",ios_base::binary);
-  //   if (out.is_open()){
-  //     cout <<"Writing...\n";
-  //     out.write((char*)&a, sizeof(a));
-  //     //out << a;
-  //   }
-  // out.close();
-
-  // Matrix b(3);
-  // ifstream in("test.bin",ios_base::binary);
-  //   if(in.is_open()){
-  //     cout<< "Reading...\n";
-  //     in.read((char*)&b, sizeof(b));
-
-  //   }
-  // in.close();
-  // cout << b;
-
   for (int i = 0; i < size; i++) delete[] arr[i];
   delete[] arr;
 }
 
-void TestChildren(){
-
-  DateCreate a(12,3,2022,3);
-  NameMatrix b("Matrica",4);
+void TestChildren() {
+  DateCreate a(12, 3, 2022, 3);
+  NameMatrix b("Matrica", 4);
   a.Print();
-  cout<< endl;
+  cout << endl;
   b.Print();
 
-  cout<< endl;
-  cout<< endl;
-  Matrix *p= new DateCreate;
+  cout << endl;
+  cout << endl;
+  Matrix *p = new DateCreate;
   p->Print();
-  cout<< endl;
-
-} 
+  cout << endl;
+}

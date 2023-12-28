@@ -23,6 +23,21 @@ Visit::Visit(const char *name, const char *group) {
   strcpy(this->group, group);
 }
 
+Visit::Visit(const Visit &other) {
+  lastName = new char[20];
+  group = new char[20];
+  date = new char *[18];
+  for (int i = 0; i < 18; i++) {
+    date[i] = new char[20];
+  }
+  dateCnt = other.dateCnt;
+  for (int i = 0; i < dateCnt; i++) {
+    strcpy(date[i], other.date[i]);
+  }
+  strcpy(lastName, other.lastName);
+  strcpy(group, other.group);
+}
+
 Visit::~Visit() {
   delete[] lastName;
   delete[] group;
@@ -65,8 +80,35 @@ istream &operator>>(istream &in, Visit &C) {
   return in;
 }
 
+bool operator>(const Visit &first, const Visit &second) {
+  if (strcmp(first.lastName, second.lastName) > 0) return true;
+  return false;
+}
+
+bool operator<(const Visit &first, const Visit &second) {
+  if (strcmp(first.lastName, second.lastName) < 0) return true;
+  return false;
+}
+bool operator==(const Visit &first, const Visit &second) {
+  if (strcmp(first.lastName, second.lastName) == 0) return true;
+  return false;
+}
+bool operator!=(const Visit &first, const Visit &second) {
+  if (strcmp(first.lastName, second.lastName) != 0) return true;
+  return false;
+}
+
+Visit Visit::operator=(const Visit &other) {
+  dateCnt = other.dateCnt;
+  for (int i = 0; i < dateCnt; i++) {
+    strcpy(date[i], other.date[i]);
+  }
+  strcpy(lastName, other.lastName);
+  strcpy(group, other.group);
+}
+
 /////////////
-binary_tree::binary_tree(int key) {
+binary_tree::binary_tree(Visit key) {
   m_root = new tree_elem(key);
   m_size = 1;
 }
@@ -95,7 +137,7 @@ void binary_tree::print_tree(tree_elem *curr) {
   }
 }
 
-bool binary_tree::find(int key) {
+bool binary_tree::find(Visit key) {
   tree_elem *curr = m_root;
   while (curr && curr->m_data != key) {
     if (curr->m_data > key)
@@ -106,7 +148,7 @@ bool binary_tree::find(int key) {
   return curr != NULL;
 }
 
-void binary_tree::insert(int key) {
+void binary_tree::insert(Visit key) {
   tree_elem *curr = m_root;
   while (curr && curr->m_data != key) {
     if (curr->m_data > key && curr->m_left == NULL) {
@@ -126,7 +168,7 @@ void binary_tree::insert(int key) {
   }
 }
 
-void binary_tree::erase(int key) {
+void binary_tree::erase(Visit key) {
   tree_elem *curr = m_root;
   tree_elem *parent = NULL;
   while (curr && curr->m_data != key) {
@@ -158,7 +200,7 @@ void binary_tree::erase(int key) {
   // наименьший элемент из его правого поддерева
   tree_elem *replace = curr->m_right;
   while (replace->m_left) replace = replace->m_left;
-  int replace_value = replace->m_data;
+  Visit replace_value = replace->m_data;
   erase(replace_value);
   curr->m_data = replace_value;
 }

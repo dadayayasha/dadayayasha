@@ -16,7 +16,7 @@ class Matrix {
   double **matrix;
   size_t sizeMatrix;
 
- public:
+ public: 
   Matrix();
   Matrix(const size_t sizeMatrix);
   Matrix(double **matrix, const size_t sizeMatrix);
@@ -41,35 +41,58 @@ class Matrix {
 
   void WriteBinary(char *name);
   void ReadBinary(char *name);
-
 };
 
-class DateCreate : public Matrix{
+class DateCreate : public Matrix {
   int day;
   int month;
   int year;
 
-  public:
+ public:
   DateCreate();
-  DateCreate(int day,int month,int year,int n);
+  DateCreate(int day, int month, int year, int n);
   DateCreate(const DateCreate &other);
 
   void SetDate();
   virtual void Print();
 };
 
-class NameMatrix : public Matrix{
+class NameMatrix : public Matrix {
   char name[100];
 
  public:
   NameMatrix();
-  NameMatrix(const char *name,int n);
+  NameMatrix(const char *name, int n);
   NameMatrix(const NameMatrix &other);
-
 
   void SetName();
   virtual void Print();
 };
 
+struct Node {
+    Matrix *data;
+    Node *next;
+    Node *prev;
+  };
+
+class List {
+  Node *start;
+  Node *head;
+  int front;
+  Node *tail;
+  int rear;
+
+  long long int size;
+
+ public:
+  List(long long int size);
+  List(const List &other);
+  ~List();
+  bool isFull();
+  bool isEmpty();
+  void enQueue(Matrix *element);
+  int deQueue();
+  void Print();
+};
 
 #endif
