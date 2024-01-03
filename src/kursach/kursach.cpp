@@ -1,32 +1,46 @@
 #include "header.h"
 
 int main() {
-  Visit y1asha("6", "AVT-209");
-  Visit y2asha("8", "AVT-209");
-  Visit y3asha("9", "AVT-209");
-  Visit y4asha("3", "AVT-209");
-  Visit yasha("5", "AVT-209");
-  Visit easha("4", "AVT-209");
-  Visit tolya("2", "AVT-209");
-  Visit kolya("1", "AVT-209");
-  Visit igor("7", "AVT-209");
+  Visit v1("Johnson", "AVT-209");
+  Visit v2("Kennedy", "AVT-209");
+  Visit v3("Taft", "AVT-209");
+  Visit v4("Biden", "AVT-242");
+  Visit v5("Trump", "AVT-209");
+  Visit v6("Obama", "AVT-209");
+  Visit v7("Bush", "AVT-208");
+  Visit v8("Clinton", "AVT-209");
+  Visit v9("Reagan", "AVT-209");
+  Visit v10("Lincoln", "AVT-242");
+  Visit v11("Ford", "AVT-208");
+  Visit v12("Nixon", "AVT-242");
 
-  Tree a(yasha);
-  a.insert(tolya);
-  a.insert(kolya);
-  a.insert(y3asha);
-  a.insert(y1asha);
-  a.insert(easha);
-  a.insert(y2asha);
-  a.insert(y4asha);
-  a.insert(igor);
-  // a.print();
+  Tree a;
+  a.insert(v1);
+  a.insert(v2);
+  a.insert(v3);
+  a.insert(v4);
+  a.insert(v5);
+  a.insert(v6);
+  a.insert(v7);
+  a.insert(v8);
+  a.insert(v9);
+  a.insert(v10);
+  a.insert(v11);
+  a.insert(v12);
+  //a.print();
   cout << endl << endl;
 
-    //a.writeTreeToFile("tree.bin");
-    a.findGroup("AVT-209");
+Tree::Iterator it = a.begin();
 
-  
+while(it.hasNext()){
+    Visit* tmp = it.next();
+    cout<<*tmp;
+}
+
+
+  // a.writeTreeToFile("tree.bin");
+  // a.findGroup("AVT-242");
+
   //   cout << endl << endl;
   //   a.erase(kolya);
   //   a.print();

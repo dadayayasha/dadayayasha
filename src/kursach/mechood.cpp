@@ -48,15 +48,15 @@ Visit::~Visit() {
   }
 }
 
-void Visit::AddDate(const char *date) {
+void Visit::addDate(const char *date) {
   strcpy(this->date[dateCnt], date);
   dateCnt++;
 }
 
-char *Visit::GetName() { return this->lastName; }
-char *Visit::GetGroup() { return this->group; }
-char **Visit::GetDate() { return this->date; }
-int Visit::GetDateCnt() { return this->dateCnt; }
+char *Visit::getName() { return this->lastName; }
+char *Visit::getGroup() { return this->group; }
+char **Visit::getDate() { return this->date; }
+int Visit::getDateCnt() { return this->dateCnt; }
 
 ostream &operator<<(ostream &out, Visit &C) {
   cout << C.lastName << "\t";
@@ -126,48 +126,72 @@ Tree::Tree() {
   size = 0;
 }
 
-Tree::~Tree() { delete_tree(root); }
+Tree::~Tree() { deleteTree(root); }
 
-void Tree::delete_tree(Node *curr) {
+Tree::Tree(const Tree &other) {
+  root = copyTree(other.root);
+  size = other.size;
+}
+
+Node *Tree::copyTree(Node *node) {
+  if (node == nullptr) {
+    return nullptr;
+  }
+
+  Node *newNode = new Node(node->data);
+  newNode->left = copyTree(node->left);
+  newNode->right = copyTree(node->right);
+
+  return newNode;
+}
+
+Tree &Tree::operator=(const Tree &other) {
+  if (this != &other) {
+    deleteTree(root);
+    root = copyTree(other.root);
+    size = other.size;
+  }
+  return *this;
+}
+
+void Tree::deleteTree(Node *curr) {
   if (curr) {
-    delete_tree(curr->left);
-    delete_tree(curr->right);
+    deleteTree(curr->left);
+    deleteTree(curr->right);
     delete curr;
   }
 }
 
-int Tree ::GetSize(){
-  return this->size;
-}
+int Tree ::getSize() { return this->size; }
 
 void Tree::print() {
-  print_tree(root);
+  printTree(root);
   cout << endl;
 }
 
-void Tree::print_tree(Node *curr) {
+void Tree::printTree(Node *curr) {
   if (curr) {
-    print_tree(curr->left);
+    printTree(curr->left);
     cout << curr->data;
-    print_tree(curr->right);
+    printTree(curr->right);
   }
 }
 
 void Tree::findGroup(const char *group) { findGroup(root, group); }
-void Tree::findGroup(Node *curr,const char *group) {
+void Tree::findGroup(Node *curr, const char *group) {
   if (curr) {
     findGroup(curr->left, group);
-    if (!strcmp(group, curr->data.GetGroup())) cout << curr->data;
+    if (!strcmp(group, curr->data.getGroup())) cout << curr->data;
     findGroup(curr->right, group);
   }
 }
 
 void Tree::findDate(const char *date) { findDate(root, date); }
-void Tree::findDate(Node *curr,const char *date) {
+void Tree::findDate(Node *curr, const char *date) {
   if (curr) {
     findDate(curr->left, date);
-    char **daate = curr->data.GetDate();
-    int siize=curr->data.GetDateCnt();
+    char **daate = curr->data.getDate();
+    int siize = curr->data.getDateCnt();
     for (int i = 0; i < siize; i++) {
       if (!strcmp(date, daate[i])) {
         cout << curr->data;
@@ -190,10 +214,10 @@ bool Tree::find(Visit key) {
   return curr != nullptr;
 }
 
-Visit Tree::namefind(const char *name) {
+Visit Tree::findName(const char *name) {
   Node *curr = root;
-  while (curr && strcmp(name, curr->data.GetName())) {
-    if (strcmp(name, curr->data.GetName()) < 0) {
+  while (curr && strcmp(name, curr->data.getName())) {
+    if (strcmp(name, curr->data.getName()) < 0) {
       curr = curr->left;
     } else {
       curr = curr->right;
@@ -202,14 +226,14 @@ Visit Tree::namefind(const char *name) {
   return curr->data;
 }
 
-Visit *Tree::find_by_logical_number(Node *root, int &count,
+Visit *Tree::findNumber(Node *root, int &count,
                                     int logical_number) {
   if (root == nullptr) {
     return nullptr;
   }
 
   Visit *found_visit =
-      find_by_logical_number(root->left, count, logical_number);
+      findNumber(root->left, count, logical_number);
   if (found_visit != nullptr) {
     return found_visit;
   }
@@ -218,12 +242,12 @@ Visit *Tree::find_by_logical_number(Node *root, int &count,
     return &(root->data);
   }
 
-  return find_by_logical_number(root->right, count, logical_number);
+  return findNumber(root->right, count, logical_number);
 }
 
-Visit *Tree::find_by_logical_number(int logical_number) {
+Visit *Tree::findNumber(int logical_number) {
   int count = 0;
-  return find_by_logical_number(root, count, logical_number);
+  return findNumber(root, count, logical_number);
 }
 
 void Tree::insert(Visit key) {
@@ -288,15 +312,15 @@ void Tree::erase(Visit key) {
   curr->data = replace_value;
 }
 
-void Tree::writeNodeToFile(Node *node, std::ofstream &outFile) {
+void Tree::writeNodeToFile(Node *node, ofstream &outFile) {
   if (node == nullptr) {
     return;
   }
 
-  char *name = node->data.GetName();
-  char *group = node->data.GetGroup();
-  int dateCnt = node->data.GetDateCnt();
-  char **date = node->data.GetDate();
+  char *name = node->data.getName();
+  char *group = node->data.getGroup();
+  int dateCnt = node->data.getDateCnt();
+  char **date = node->data.getDate();
 
   int sizeArr = strlen(name) + 1;
   outFile.write((char *)&(sizeArr), sizeof(sizeArr));
@@ -323,7 +347,7 @@ void Tree::writeNodeToFile(Node *node, std::ofstream &outFile) {
   writeNodeToFile(node->right, outFile);
 }
 
-void Tree::writeTreeToFile(const std::string &filename) {
+void Tree::writeTreeToFile(const char*filename) {
   std::ofstream outFile(filename, std::ios::binary);
   if (!outFile) {
     std::cerr << "Could not open file for writing: " << filename << std::endl;
@@ -335,7 +359,7 @@ void Tree::writeTreeToFile(const std::string &filename) {
   outFile.close();
 }
 
-void Tree::readTreeFromFile(const std::string &filename) {
+void Tree::readTreeFromFile(const char*filename) {
   std::ifstream inFile(filename, std::ios::binary);
   if (!inFile) {
     std::cerr << "Could not open file for reading: " << filename << std::endl;
@@ -375,4 +399,28 @@ void Tree::readTreeFromFile(const std::string &filename) {
   }
 
   inFile.close();
+}
+
+void Tree::Iterator::pushLeftmost(Node *node) {
+  while (node != nullptr) {
+    nodeStack.push(node);
+    node = node->left;
+  }
+}
+
+Tree::Iterator::Iterator(Node *root) { pushLeftmost(root); }
+
+bool Tree::Iterator::hasNext() { return !nodeStack.empty(); }
+
+Visit *Tree::Iterator::next() {
+  if (!hasNext()) return nullptr;
+
+  Node *nextNode = nodeStack.top();
+  nodeStack.pop();
+
+  if (nextNode->right != nullptr) {
+    pushLeftmost(nextNode->right);
+  }
+
+  return &(nextNode->data);
 }

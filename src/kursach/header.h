@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <stack>
 
 using namespace std;
 
@@ -13,15 +14,15 @@ class Visit {
   int dateCnt;
 
  public:
-  char *GetName();
-  char *GetGroup();
-  char **GetDate();
-  int GetDateCnt();
+  char *getName();
+  char *getGroup();
+  char **getDate();
+  int getDateCnt();
   Visit();
   Visit(const char *name, const char *group);
   Visit(const Visit &other);
   ~Visit();
-  void AddDate(const char *date);
+  void addDate(const char *date);
 
   Visit operator=(const Visit &other);
 
@@ -34,7 +35,7 @@ class Visit {
   friend bool operator!=(const Visit &first, const Visit &second);
 };
 
-class Node{
+class Node {
  public:
   Visit data;
   Node *left;
@@ -50,29 +51,48 @@ class Tree {
  private:
   Node *root;
   int size;
-  void print_tree(Node *);
-  void delete_tree(Node *);
-  Visit *find_by_logical_number(Node *root, int &count, int logical_number);
-  void writeNodeToFile(Node *node, std::ofstream &outFile);
-  void findGroup(Node*curr,const char * group);
-  void findDate(Node*curr,const char * date);
+  void printTree(Node *);
+  void deleteTree(Node *);
+  Node *copyTree(Node *node);
+  Visit *findNumber(Node *root, int &count, int logical_number);
+  void writeNodeToFile(Node *node, ofstream &outFile);
+  void findGroup(Node *curr, const char *group);
+  void findDate(Node *curr, const char *date);
 
  public:
+  class Iterator {
+   private:
+    stack<Node *> nodeStack;
+
+    void pushLeftmost(Node *node);
+
+   public:
+    Iterator(Node *root);
+
+    bool hasNext();
+
+    Visit *next();
+  };
+  Iterator begin() { return Iterator(root); }
+  Iterator end() { return Iterator(nullptr); }
   Tree(Visit);
   Tree();
+  Tree(const Tree &other);
   ~Tree();
+  Tree &operator=(const Tree &other);
   void print();
   bool find(Visit);
-  Visit namefind(const char *name);
+  Visit findName(const char *name);
   void insert(Visit);
   void erase(Visit);
-  Visit *find_by_logical_number(int logical_number);
-  int GetSize();
-  void writeTreeToFile(const std::string &filename);
-  void readTreeFromFile(const std::string &filename);
-  void findGroup(const char * group);
-  void findDate(const char * date);
-
+  Visit *findNumber(int logical_number);
+  int getSize();
+  void writeTreeToFile(const char*filename);
+  void readTreeFromFile(const char*filename);
+  void findGroup(const char *group);
+  void findDate(const char *date);
 };
+
+
 
 #endif
