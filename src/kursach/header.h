@@ -13,6 +13,10 @@ class Visit {
   int dateCnt;
 
  public:
+  char *GetName();
+  char *GetGroup();
+  char **GetDate();
+  int GetDateCnt();
   Visit();
   Visit(const char *name, const char *group);
   Visit(const Visit &other);
@@ -30,32 +34,45 @@ class Visit {
   friend bool operator!=(const Visit &first, const Visit &second);
 };
 
-class tree_elem {
+class Node{
  public:
-  Visit m_data;
-  tree_elem *m_left;
-  tree_elem *m_right;
-  tree_elem(Visit data) {
-    m_left = nullptr;
-    m_right = nullptr;
-    m_data = data;
+  Visit data;
+  Node *left;
+  Node *right;
+  Node(Visit data) {
+    left = nullptr;
+    right = nullptr;
+    this->data = data;
   }
 };
 
-class binary_tree {
+class Tree {
  private:
-  tree_elem *m_root;
-  int m_size;
-  void print_tree(tree_elem *);
-  void delete_tree(tree_elem *);
+  Node *root;
+  int size;
+  void print_tree(Node *);
+  void delete_tree(Node *);
+  Visit *find_by_logical_number(Node *root, int &count, int logical_number);
+  void writeNodeToFile(Node *node, std::ofstream &outFile);
+  void findGroup(Node*curr,const char * group);
+  void findDate(Node*curr,const char * date);
 
  public:
-  binary_tree(Visit);
-  ~binary_tree();
+  Tree(Visit);
+  Tree();
+  ~Tree();
   void print();
   bool find(Visit);
+  Visit namefind(const char *name);
   void insert(Visit);
   void erase(Visit);
+  Visit *find_by_logical_number(int logical_number);
+  int GetSize();
+  void writeTreeToFile(const std::string &filename);
+  void readTreeFromFile(const std::string &filename);
+  void findGroup(const char * group);
+  void findDate(const char * date);
+
 };
 
 #endif

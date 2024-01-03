@@ -12,13 +12,12 @@ Visit::Visit() {
 
 Visit::Visit(const char *name, const char *group) {
   lastName = new char[20];
-  group = new char[20];
+  this->group = new char[20];
   date = new char *[18];
   for (int i = 0; i < 18; i++) {
     date[i] = new char[20];
   }
   dateCnt = 0;
-
   strcpy(lastName, name);
   strcpy(this->group, group);
 }
@@ -39,18 +38,25 @@ Visit::Visit(const Visit &other) {
 }
 
 Visit::~Visit() {
-  delete[] lastName;
-  delete[] group;
-  for (int i = 0; i < 18; i++) {
-    delete[] date[i];
+  if (lastName) delete[] lastName;
+  if (group) delete[] group;
+  if (date) {
+    for (int i = 0; i < 18; i++) {
+      delete[] date[i];
+    }
+    delete[] date;
   }
-  delete[] date;
 }
 
 void Visit::AddDate(const char *date) {
   strcpy(this->date[dateCnt], date);
   dateCnt++;
 }
+
+char *Visit::GetName() { return this->lastName; }
+char *Visit::GetGroup() { return this->group; }
+char **Visit::GetDate() { return this->date; }
+int Visit::GetDateCnt() { return this->dateCnt; }
 
 ostream &operator<<(ostream &out, Visit &C) {
   cout << C.lastName << "\t";
@@ -105,102 +111,268 @@ Visit Visit::operator=(const Visit &other) {
   }
   strcpy(lastName, other.lastName);
   strcpy(group, other.group);
+
+  return *this;
 }
 
 /////////////
-binary_tree::binary_tree(Visit key) {
-  m_root = new tree_elem(key);
-  m_size = 1;
+Tree::Tree(Visit key) {
+  root = new Node(key);
+  size = 1;
 }
 
-binary_tree::~binary_tree() { delete_tree(m_root); }
+Tree::Tree() {
+  root = nullptr;
+  size = 0;
+}
 
-void binary_tree::delete_tree(tree_elem *curr) {
+Tree::~Tree() { delete_tree(root); }
+
+void Tree::delete_tree(Node *curr) {
   if (curr) {
-    delete_tree(curr->m_left);
-    delete_tree(curr->m_right);
+    delete_tree(curr->left);
+    delete_tree(curr->right);
     delete curr;
   }
 }
 
-void binary_tree::print() {
-  print_tree(m_root);
+int Tree ::GetSize(){
+  return this->size;
+}
+
+void Tree::print() {
+  print_tree(root);
   cout << endl;
 }
 
-void binary_tree::print_tree(tree_elem *curr) {
-  if (curr)  // Проверка на ненулевой указатель
-  {
-    print_tree(curr->m_left);
-    cout << curr->m_data << " ";
-    print_tree(curr->m_right);
+void Tree::print_tree(Node *curr) {
+  if (curr) {
+    print_tree(curr->left);
+    cout << curr->data;
+    print_tree(curr->right);
   }
 }
 
-bool binary_tree::find(Visit key) {
-  tree_elem *curr = m_root;
-  while (curr && curr->m_data != key) {
-    if (curr->m_data > key)
-      curr = curr->m_left;
-    else
-      curr = curr->m_right;
+void Tree::findGroup(const char *group) { findGroup(root, group); }
+void Tree::findGroup(Node *curr,const char *group) {
+  if (curr) {
+    findGroup(curr->left, group);
+    if (!strcmp(group, curr->data.GetGroup())) cout << curr->data;
+    findGroup(curr->right, group);
   }
-  return curr != NULL;
 }
 
-void binary_tree::insert(Visit key) {
-  tree_elem *curr = m_root;
-  while (curr && curr->m_data != key) {
-    if (curr->m_data > key && curr->m_left == NULL) {
-      curr->m_left = new tree_elem(key);
-      ++m_size;
-      return;
+void Tree::findDate(const char *date) { findDate(root, date); }
+void Tree::findDate(Node *curr,const char *date) {
+  if (curr) {
+    findDate(curr->left, date);
+    char **daate = curr->data.GetDate();
+    int siize=curr->data.GetDateCnt();
+    for (int i = 0; i < siize; i++) {
+      if (!strcmp(date, daate[i])) {
+        cout << curr->data;
+        break;
+      }
     }
-    if (curr->m_data < key && curr->m_right == NULL) {
-      curr->m_right = new tree_elem(key);
-      ++m_size;
-      return;
-    }
-    if (curr->m_data > key)
-      curr = curr->m_left;
-    else
-      curr = curr->m_right;
+
+    findDate(curr->right, date);
   }
 }
 
-void binary_tree::erase(Visit key) {
-  tree_elem *curr = m_root;
-  tree_elem *parent = NULL;
-  while (curr && curr->m_data != key) {
-    parent = curr;
-    if (curr->m_data > key) {
-      curr = curr->m_left;
+bool Tree::find(Visit key) {
+  Node *curr = root;
+  while (curr && curr->data != key) {
+    if (curr->data > key)
+      curr = curr->left;
+    else
+      curr = curr->right;
+  }
+  return curr != nullptr;
+}
+
+Visit Tree::namefind(const char *name) {
+  Node *curr = root;
+  while (curr && strcmp(name, curr->data.GetName())) {
+    if (strcmp(name, curr->data.GetName()) < 0) {
+      curr = curr->left;
     } else {
-      curr = curr->m_right;
+      curr = curr->right;
+    }
+  }
+  return curr->data;
+}
+
+Visit *Tree::find_by_logical_number(Node *root, int &count,
+                                    int logical_number) {
+  if (root == nullptr) {
+    return nullptr;
+  }
+
+  Visit *found_visit =
+      find_by_logical_number(root->left, count, logical_number);
+  if (found_visit != nullptr) {
+    return found_visit;
+  }
+
+  if (++count == logical_number) {
+    return &(root->data);
+  }
+
+  return find_by_logical_number(root->right, count, logical_number);
+}
+
+Visit *Tree::find_by_logical_number(int logical_number) {
+  int count = 0;
+  return find_by_logical_number(root, count, logical_number);
+}
+
+void Tree::insert(Visit key) {
+  if (root == nullptr) {
+    root = new Node(key);
+    size = 1;
+    return;
+  }
+  Node *curr = root;
+  while (curr && curr->data != key) {
+    if (curr->data > key && curr->left == NULL) {
+      curr->left = new Node(key);
+      ++size;
+      return;
+    }
+    if (curr->data < key && curr->right == NULL) {
+      curr->right = new Node(key);
+      ++size;
+      return;
+    }
+    if (curr->data > key)
+      curr = curr->left;
+    else
+      curr = curr->right;
+  }
+}
+
+void Tree::erase(Visit key) {
+  Node *curr = root;
+  Node *parent = NULL;
+  while (curr && curr->data != key) {
+    parent = curr;
+    if (curr->data > key) {
+      curr = curr->left;
+    } else {
+      curr = curr->right;
     }
   }
   if (!curr) return;
-  if (curr->m_left == NULL) {
+  if (curr->left == NULL) {
     // Вместо curr подвешивается его правое поддерево
-    if (parent && parent->m_left == curr) parent->m_left = curr->m_right;
-    if (parent && parent->m_right == curr) parent->m_right = curr->m_right;
-    --m_size;
+    if (parent && parent->left == curr) parent->left = curr->right;
+    if (parent && parent->right == curr) parent->right = curr->right;
+    --size;
     delete curr;
     return;
   }
-  if (curr->m_right == NULL) {
+  if (curr->right == NULL) {
     // Вместо curr подвешивается его левое поддерево
-    if (parent && parent->m_left == curr) parent->m_left = curr->m_left;
-    if (parent && parent->m_right == curr) parent->m_right = curr->m_left;
-    --m_size;
+    if (parent && parent->left == curr) parent->left = curr->left;
+    if (parent && parent->right == curr) parent->right = curr->left;
+    --size;
     delete curr;
     return;
   }
   // У элемента есть два потомка, тогда на место элемента поставим
   // наименьший элемент из его правого поддерева
-  tree_elem *replace = curr->m_right;
-  while (replace->m_left) replace = replace->m_left;
-  Visit replace_value = replace->m_data;
+  Node *replace = curr->right;
+  while (replace->left) replace = replace->left;
+  Visit replace_value = replace->data;
   erase(replace_value);
-  curr->m_data = replace_value;
+  curr->data = replace_value;
+}
+
+void Tree::writeNodeToFile(Node *node, std::ofstream &outFile) {
+  if (node == nullptr) {
+    return;
+  }
+
+  char *name = node->data.GetName();
+  char *group = node->data.GetGroup();
+  int dateCnt = node->data.GetDateCnt();
+  char **date = node->data.GetDate();
+
+  int sizeArr = strlen(name) + 1;
+  outFile.write((char *)&(sizeArr), sizeof(sizeArr));
+  for (int i = 0; i < sizeArr; i++) {
+    outFile.write((char *)&(name[i]), sizeof(name[i]));
+  }
+
+  sizeArr = strlen(group) + 1;
+  outFile.write((char *)&(sizeArr), sizeof(sizeArr));
+  for (int i = 0; i < sizeArr; i++) {
+    outFile.write((char *)&(group[i]), sizeof(group[i]));
+  }
+
+  outFile.write((char *)&(dateCnt), sizeof(dateCnt));
+  for (int i = 0; i < dateCnt; i++) {
+    sizeArr = strlen(date[i]) + 1;
+    outFile.write((char *)&(sizeArr), sizeof(sizeArr));
+    for (int j = 0; j < sizeArr; j++) {
+      outFile.write((char *)&(date[i][j]), sizeof(date[i][j]));
+    }
+  }
+
+  writeNodeToFile(node->left, outFile);
+  writeNodeToFile(node->right, outFile);
+}
+
+void Tree::writeTreeToFile(const std::string &filename) {
+  std::ofstream outFile(filename, std::ios::binary);
+  if (!outFile) {
+    std::cerr << "Could not open file for writing: " << filename << std::endl;
+    return;
+  }
+
+  writeNodeToFile(this->root, outFile);
+
+  outFile.close();
+}
+
+void Tree::readTreeFromFile(const std::string &filename) {
+  std::ifstream inFile(filename, std::ios::binary);
+  if (!inFile) {
+    std::cerr << "Could not open file for reading: " << filename << std::endl;
+    return;
+  }
+
+  int sizeArr;
+  while (inFile.read((char *)&(sizeArr), sizeof(sizeArr))) {
+    char name[20];
+    char group[20];
+    int dateCnt;
+
+    for (int i = 0; i < sizeArr; i++) {
+      inFile.read((char *)&(name[i]), sizeof(name[i]));
+    }
+    name[sizeArr] = '\0';
+
+    inFile.read((char *)&(sizeArr), sizeof(sizeArr));
+    for (int i = 0; i < sizeArr; i++) {
+      inFile.read((char *)&(group[i]), sizeof(group[i]));
+    }
+    group[sizeArr] = '\0';
+
+    Visit tmp(name, group);
+
+    inFile.read((char *)&(dateCnt), sizeof(dateCnt));
+    for (int i = 0; i < dateCnt; i++) {
+      inFile.read((char *)&(sizeArr), sizeof(sizeArr));
+      char date[20];
+      for (int j = 0; j < sizeArr; j++) {
+        inFile.read((char *)&(date[j]), sizeof(date[j]));
+      }
+      date[sizeArr] = '\0';
+    }
+
+    this->insert(tmp);
+  }
+
+  inFile.close();
 }
