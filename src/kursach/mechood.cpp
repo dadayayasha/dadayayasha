@@ -48,6 +48,18 @@ Visit::~Visit() {
   }
 }
 
+void Visit::setName(const char *name) {
+  delete[] lastName;
+  lastName = new char[strlen(name) + 1];
+  strcpy(lastName, name);
+}
+
+void Visit::setGroup(const char *group) {
+  delete[] this->group;
+  this->group = new char[strlen(group) + 1];
+  strcpy(this->group, group);
+}
+
 void Visit::addDate(const char *date) {
   strcpy(this->date[dateCnt], date);
   dateCnt++;
@@ -116,6 +128,7 @@ Visit Visit::operator=(const Visit &other) {
 }
 
 /////////////
+
 Tree::Tree(Visit key) {
   root = new Node(key);
   size = 1;
@@ -226,28 +239,26 @@ Visit Tree::findName(const char *name) {
   return curr->data;
 }
 
-Visit *Tree::findNumber(Node *root, int &count,
-                                    int logical_number) {
+Visit *Tree::findNumber(Node *root, int &count, int logicalNumber) {
   if (root == nullptr) {
     return nullptr;
   }
 
-  Visit *found_visit =
-      findNumber(root->left, count, logical_number);
-  if (found_visit != nullptr) {
-    return found_visit;
+  Visit *foundVisit = findNumber(root->left, count, logicalNumber);
+  if (foundVisit != nullptr) {
+    return foundVisit;
   }
 
-  if (++count == logical_number) {
+  if (++count == logicalNumber) {
     return &(root->data);
   }
 
-  return findNumber(root->right, count, logical_number);
+  return findNumber(root->right, count, logicalNumber);
 }
 
-Visit *Tree::findNumber(int logical_number) {
+Visit *Tree::findNumber(int logicalNumber) {
   int count = 0;
-  return findNumber(root, count, logical_number);
+  return findNumber(root, count, logicalNumber);
 }
 
 void Tree::insert(Visit key) {
@@ -258,12 +269,12 @@ void Tree::insert(Visit key) {
   }
   Node *curr = root;
   while (curr && curr->data != key) {
-    if (curr->data > key && curr->left == NULL) {
+    if (curr->data > key && curr->left == nullptr) {
       curr->left = new Node(key);
       ++size;
       return;
     }
-    if (curr->data < key && curr->right == NULL) {
+    if (curr->data < key && curr->right == nullptr) {
       curr->right = new Node(key);
       ++size;
       return;
@@ -277,7 +288,7 @@ void Tree::insert(Visit key) {
 
 void Tree::erase(Visit key) {
   Node *curr = root;
-  Node *parent = NULL;
+  Node *parent = nullptr;
   while (curr && curr->data != key) {
     parent = curr;
     if (curr->data > key) {
@@ -287,7 +298,7 @@ void Tree::erase(Visit key) {
     }
   }
   if (!curr) return;
-  if (curr->left == NULL) {
+  if (curr->left == nullptr) {
     // Вместо curr подвешивается его правое поддерево
     if (parent && parent->left == curr) parent->left = curr->right;
     if (parent && parent->right == curr) parent->right = curr->right;
@@ -295,7 +306,7 @@ void Tree::erase(Visit key) {
     delete curr;
     return;
   }
-  if (curr->right == NULL) {
+  if (curr->right == nullptr) {
     // Вместо curr подвешивается его левое поддерево
     if (parent && parent->left == curr) parent->left = curr->left;
     if (parent && parent->right == curr) parent->right = curr->left;
@@ -307,9 +318,9 @@ void Tree::erase(Visit key) {
   // наименьший элемент из его правого поддерева
   Node *replace = curr->right;
   while (replace->left) replace = replace->left;
-  Visit replace_value = replace->data;
-  erase(replace_value);
-  curr->data = replace_value;
+  Visit replaceValue = replace->data;
+  erase(replaceValue);
+  curr->data = replaceValue;
 }
 
 void Tree::writeNodeToFile(Node *node, ofstream &outFile) {
@@ -347,10 +358,10 @@ void Tree::writeNodeToFile(Node *node, ofstream &outFile) {
   writeNodeToFile(node->right, outFile);
 }
 
-void Tree::writeTreeToFile(const char*filename) {
-  std::ofstream outFile(filename, std::ios::binary);
+void Tree::writeTreeToFile(const char *filename) {
+  ofstream outFile(filename, std::ios::binary);
   if (!outFile) {
-    std::cerr << "Could not open file for writing: " << filename << std::endl;
+    cout << "Could not open file for writing: " << filename << endl;
     return;
   }
 
@@ -359,10 +370,10 @@ void Tree::writeTreeToFile(const char*filename) {
   outFile.close();
 }
 
-void Tree::readTreeFromFile(const char*filename) {
-  std::ifstream inFile(filename, std::ios::binary);
+void Tree::readTreeFromFile(const char *filename) {
+  ifstream inFile(filename, std::ios::binary);
   if (!inFile) {
-    std::cerr << "Could not open file for reading: " << filename << std::endl;
+    cout << "Could not open file for reading: " << filename << endl;
     return;
   }
 
@@ -400,6 +411,8 @@ void Tree::readTreeFromFile(const char*filename) {
 
   inFile.close();
 }
+
+///////////////
 
 void Tree::Iterator::pushLeftmost(Node *node) {
   while (node != nullptr) {

@@ -23,6 +23,8 @@ class Visit {
   Visit(const Visit &other);
   ~Visit();
   void addDate(const char *date);
+  void setName(const char *name);
+  void setGroup(const char *group);
 
   Visit operator=(const Visit &other);
 
@@ -51,10 +53,11 @@ class Tree {
  private:
   Node *root;
   int size;
+
   void printTree(Node *);
   void deleteTree(Node *);
   Node *copyTree(Node *node);
-  Visit *findNumber(Node *root, int &count, int logical_number);
+  Visit *findNumber(Node *root, int &count, int logicalNumber);
   void writeNodeToFile(Node *node, ofstream &outFile);
   void findGroup(Node *curr, const char *group);
   void findDate(Node *curr, const char *date);
@@ -73,26 +76,28 @@ class Tree {
 
     Visit *next();
   };
+
   Iterator begin() { return Iterator(root); }
   Iterator end() { return Iterator(nullptr); }
+
   Tree(Visit);
   Tree();
   Tree(const Tree &other);
   ~Tree();
+
   Tree &operator=(const Tree &other);
+
   void print();
   bool find(Visit);
   Visit findName(const char *name);
   void insert(Visit);
   void erase(Visit);
-  Visit *findNumber(int logical_number);
+  Visit *findNumber(int logicalNumber);
   int getSize();
-  void writeTreeToFile(const char*filename);
-  void readTreeFromFile(const char*filename);
+  void writeTreeToFile(const char *filename);
+  void readTreeFromFile(const char *filename);
   void findGroup(const char *group);
   void findDate(const char *date);
 };
-
-
 
 #endif
